@@ -1,15 +1,15 @@
 <?php
 
 /*
-  Plugin Name: WooCommerce Chilean Peso
+  Plugin Name: WooCommerce Chilean Peso + Chilean States
   Plugin URI: http://plugins.svn.wordpress.org/woocommerce-chilean-peso-currency/
-  Description: This plugin add the chilean currency and symbol to WooCommerce. Este plugin agrega los Pesos Chilenos a WooCommerce.
-  Version: 1.0
+  Description: This plugin add the chilean currency,symbol and the states to WooCommerce. Este plugin agrega los Pesos Chilenos y los estados a WooCommerce.
+  Version: 2.1
   Author: Cristian Tala Sánchez <cristian.tala@gmail.com>
   Author URI: http://www.cristiantala.cl
   License: GPLv3
   Requires at least: 3.0 +
-  Tested up to: 3.3.1
+  Tested up to: 3.4.2
  */
 /*
  *      Copyright 2012 Cristian Tala Sánchez <cristian.tala@gmail.com>
@@ -35,15 +35,38 @@ function add_clp_currency($currencies) {
     return $currencies;
 }
 
-
-function add_clp_currency_symbol( $currency_symbol, $currency ) {
-     switch( $currency ) {
-          case 'CLP': $currency_symbol = '$'; break;
-     }
-     return $currency_symbol;
+function add_clp_currency_symbol($currency_symbol, $currency) {
+    switch ($currency) {
+        case 'CLP': $currency_symbol = '$';
+            break;
+    }
+    return $currency_symbol;
 }
 
+function custom_woocommerce_states($states) {
+
+    $states['CL'] = array(
+        'I' => 'I de Tarapacá',
+        'II' => 'II de Antofagasta',
+        'III' => 'III de Atacama',
+        'IV' => 'IV de Coquimbo',
+        'V' => 'V de Valparaíso',
+        'VI' => 'VI del Libertador General Bernardo O\'Higgins',
+        'VII' => 'VII del Maule',
+        'VIII' => 'VIII del Bío Bío',
+        'IX' => 'IX de la Araucanía',
+        'XIV' => 'XIV de los Ríos',
+        'X' => 'X de los Lagos',
+        'XI' => 'XI Aysén del General Carlos Ibáñez del Campo',
+        'XII' => 'XII de Magallanes y Antártica Chilena',
+        'RM' => 'Metropolitana de Santiago',
+        'XV' => 'XV de Arica y Parinacota',
+    );
+
+    return $states;
+}
+
+add_filter('woocommerce_states', 'custom_woocommerce_states');
 add_filter('woocommerce_currencies', 'add_clp_currency', 10, 1);
 add_filter('woocommerce_currency_symbol', 'add_clp_currency_symbol', 10, 2);
-
 ?>

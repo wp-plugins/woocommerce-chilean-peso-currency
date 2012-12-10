@@ -10,7 +10,7 @@ Requires at least: 3, 3.3+ and WooCommerce 1.4+, Chilean Peso, Pesos Chilenos, c
 
 Tested up to: 3.3.1
 
-Stable tag: 1.0
+Stable tag: 2.1
 
 == Description ==
 
@@ -22,6 +22,6 @@ This Small Plugin add The Chilean Peso currency and symbol to woocommerce.
 == Changelog ==
 
 
-= 1.0 =
-
-
+= 2.0 =
+Added the Chilean states for WooCommerce
+Agregadas las Regiones de Chile a WooCommerce
