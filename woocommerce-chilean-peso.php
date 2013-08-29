@@ -3,8 +3,8 @@
 /*
   Plugin Name: WooCommerce Chilean Peso + Chilean States
   Plugin URI: http://plugins.svn.wordpress.org/woocommerce-chilean-peso-currency/
-  Description: This plugin add the chilean currency, symbol , paypal and the states to WooCommerce. Este plugin agrega los Pesos Chilenos y los estados además de la posibilidad de pagar con paypal y CLP  a WooCommerce.
-  Version: 2.2
+  Description: This plugin add the chilean currency, symbol , paypal and the states to WooCommerce.
+  Version: 2.3
   Author: Cristian Tala Sánchez <cristian.tala@gmail.com>
   Author URI: http://www.cristiantala.cl
   License: GPLv3
