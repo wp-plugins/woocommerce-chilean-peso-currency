@@ -3,13 +3,13 @@
 /*
   Plugin Name: WooCommerce Chilean Peso + Chilean States
   Plugin URI: http://plugins.svn.wordpress.org/woocommerce-chilean-peso-currency/
-  Description: This plugin add the chilean currency,symbol and the states to WooCommerce. Este plugin agrega los Pesos Chilenos y los estados a WooCommerce.
-  Version: 2.1
+  Description: This plugin add the chilean currency, symbol , paypal and the states to WooCommerce. Este plugin agrega los Pesos Chilenos y los estados además de la posibilidad de pagar con paypal y CLP  a WooCommerce.
+  Version: 2.2
   Author: Cristian Tala Sánchez <cristian.tala@gmail.com>
   Author URI: http://www.cristiantala.cl
   License: GPLv3
   Requires at least: 3.0 +
-  Tested up to: 3.4.2
+  Tested up to: 3.6
  */
 /*
  *      Copyright 2012 Cristian Tala Sánchez <cristian.tala@gmail.com>
@@ -66,7 +66,31 @@ function custom_woocommerce_states($states) {
     return $states;
 }
 
+
+    function add_clp_paypal_valid_currency( $currencies ) {  
+     array_push ( $currencies , 'CLP' );
+     return $currencies;  
+    } 
+
+
+function convert_clp_to_usd($paypal_args){
+	if ( $paypal_args['currency_code'] == 'CLP'){
+		$convert_rate = 520; //set the converting rate
+		$paypal_args['currency_code'] = 'USD'; //change CLP to USD
+		$i = 1;
+
+		while (isset($paypal_args['amount_' . $i])) {
+			$paypal_args['amount_' . $i] = round( $paypal_args['amount_' . $i] / $convert_rate, 2);
+			++$i;
+		}
+
+	}
+return $paypal_args;
+}
+
+add_filter('woocommerce_paypal_args', 'convert_clp_to_usd');
 add_filter('woocommerce_states', 'custom_woocommerce_states');
 add_filter('woocommerce_currencies', 'add_clp_currency', 10, 1);
 add_filter('woocommerce_currency_symbol', 'add_clp_currency_symbol', 10, 2);
+add_filter( 'woocommerce_paypal_supported_currencies', 'add_clp_paypal_valid_currency' );     
 ?>
