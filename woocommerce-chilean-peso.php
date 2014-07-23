@@ -3,13 +3,13 @@
 /*
   Plugin Name: WooCommerce Chilean Peso + Chilean States
   Plugin URI: http://plugins.svn.wordpress.org/woocommerce-chilean-peso-currency/
-  Description: This plugin add the chilean currency, symbol , paypal and the states to WooCommerce.
-  Version: 2.4.1
+  Description: This plugin enables the payment with paypal for Chile and the Chilean states to WooCommerce.
+  Version: 2.5
   Author: Cristian Tala Sánchez <cristian.tala@gmail.com>
   Author URI: http://www.cristiantala.cl
   License: GPLv3
   Requires at least: 3.0 +
-  Tested up to: 3.7.1
+  Tested up to: 3.9.1
  */
 /*
  *      Copyright 2012 Cristian Tala Sánchez <cristian.tala@gmail.com>
@@ -31,6 +31,7 @@
  */
 
 function add_clp_currency($currencies) {
+
     $currencies["CLP"] = 'Pesos Chilenos';
     return $currencies;
 }
@@ -66,42 +67,67 @@ function custom_woocommerce_states($states) {
     return $states;
 }
 
-
-    function add_clp_paypal_valid_currency( $currencies ) {  
-     array_push ( $currencies , 'CLP' );
-     return $currencies;  
-    } 
-
-
-function convert_clp_to_usd($paypal_args){
-	if ( $paypal_args['currency_code'] == 'CLP'){
-		$convert_rate = 520; //set the converting rate
-		$paypal_args['currency_code'] = 'USD'; //change CLP to USD
-		$i = 1;
-
-		while (isset($paypal_args['amount_' . $i])) {
-			$paypal_args['amount_' . $i] = round( $paypal_args['amount_' . $i] / $convert_rate, 2);
-			++$i;
-		}
-
-	}
-return $paypal_args;
+function add_clp_paypal_valid_currency($currencies) {
+    array_push($currencies, 'CLP');
+    return $currencies;
 }
 
+/*
+ * Hace el cambio del valor a dolares a través de OpenExchange
+ * Se necesita tener curl instalado para que esto funcione.
+ */
+
+function convert_clp_to_usd($paypal_args) {
+    if ($paypal_args['currency_code'] == 'CLP') {
+
+        $valorDolar = wp_cache_get('clp_usd_ctala');
+        if (false === $valorDolar) {
+            if (function_exists('curl_version')) {
+                $file = 'latest.json';
+                $appId = '3d2f0769c4fc42278faffd3933a23dd6';
+                $url = "http://openexchangerates.org/api/$file?app_id=$appId";
+// Open CURL session:
+                $ch = curl_init($url);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+
+// Get the data:
+                $json = curl_exec($ch);
+                curl_close($ch);
+
+// Decode JSON response:
+                $exchangeRates = json_decode($json);
+                $valorDolar = $exchangeRates->rates->CLP;
+            } else {
+               $valorDolar = 580; // Este es el valor por defecto. 
+            }
+            wp_cache_set('clp_usd_ctala', $valorDolar);
+        }
+
+        $convert_rate = $valorDolar; //set the converting rate
+        $paypal_args['currency_code'] = 'USD'; //change CLP to USD
+        $i = 1;
+
+        while (isset($paypal_args['amount_' . $i])) {
+            $paypal_args['amount_' . $i] = round($paypal_args['amount_' . $i] / $convert_rate, 2);
+            ++$i;
+        }
+    }
+    return $paypal_args;
+}
 
 // Se eliminan los datos postales como obligatorios.
-function postalcode_override_default_address_fields( $address_fields ) {
-     $address_fields['postcode']['required'] = false;
+function postalcode_override_default_address_fields($address_fields) {
+    $address_fields['postcode']['required'] = false;
 
-     return $address_fields;
+    return $address_fields;
 }
 
 //Se eliminan los códigos portales como obligatorios. (Filtro)
-add_filter( 'woocommerce_default_address_fields' , 'postalcode_override_default_address_fields' );
+add_filter('woocommerce_default_address_fields', 'postalcode_override_default_address_fields');
 
 add_filter('woocommerce_paypal_args', 'convert_clp_to_usd');
 add_filter('woocommerce_states', 'custom_woocommerce_states');
 add_filter('woocommerce_currencies', 'add_clp_currency', 10, 1);
 add_filter('woocommerce_currency_symbol', 'add_clp_currency_symbol', 10, 2);
-add_filter( 'woocommerce_paypal_supported_currencies', 'add_clp_paypal_valid_currency' );     
+add_filter('woocommerce_paypal_supported_currencies', 'add_clp_paypal_valid_currency');
 ?>

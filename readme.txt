@@ -10,7 +10,7 @@ Requires at least: 3, 3.3+ and WooCommerce 1.4+, Chilean Peso, Pesos Chilenos, c
 
 Tested up to: 3.6
 
-Stable tag: 2.4.1
+Stable tag: 2.5
 
 == Description ==
 
@@ -29,13 +29,18 @@ Agregar panel de administración para las variables.
 
 == Changelog ==
 
+= 2.5 =
+
+* Conexión a OpenExchange Rates para tener el valor del dolar actualizado.
+* Se hace cache del valor del dolar para ahorrar consultas.
+
 = 2.4 =
 
-Se deshabilita el código postal como obligatorio.
+* Se deshabilita el código postal como obligatorio.
 
 = 2.2 =
-Agregada la posibilidad de usar paypal con woocommerce y chilean pesos.
+* Agregada la posibilidad de usar paypal con woocommerce y chilean pesos.
 
 = 2.0 =
-Added the Chilean states for WooCommerce
-Agregadas las Regiones de Chile a WooCommerce
+* Added the Chilean states for WooCommerce
+* Agregadas las Regiones de Chile a WooCommerce
