@@ -4,12 +4,12 @@
   Plugin Name: WooCommerce Chilean Peso + Chilean States
   Plugin URI: http://plugins.svn.wordpress.org/woocommerce-chilean-peso-currency/
   Description: This plugin enables the payment with paypal for Chile and the Chilean states to WooCommerce.
-  Version: 2.5
+  Version: 2.5.5
   Author: Cristian Tala Sánchez <cristian.tala@gmail.com>
   Author URI: http://www.cristiantala.cl
   License: GPLv3
   Requires at least: 3.0 +
-  Tested up to: 3.9.1
+  Tested up to: 4.2
  */
 /*
  *      Copyright 2012 Cristian Tala Sánchez <cristian.tala@gmail.com>
@@ -29,6 +29,15 @@
  *      Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  *      MA 02110-1301, USA.
  */
+register_activation_hook(__FILE__, 'ctala_install_cleancache');
+
+/*
+ * Esta funcion limpia el cache luego de instalar la nueva versión del plugin.
+ */
+function ctala_install_cleancache() {
+
+    wp_cache_delete("clp_usd_ctala", "ctala");
+}
 
 function add_clp_currency($currencies) {
 
@@ -78,9 +87,14 @@ function add_clp_paypal_valid_currency($currencies) {
  */
 
 function convert_clp_to_usd($paypal_args) {
+    //Grupo para el cache
+    $ctala_group = "ctala";
+//Segundos en una semana a cachear el valor.
+    $ctala_expire = 604800;
+
     if ($paypal_args['currency_code'] == 'CLP') {
 
-        $valorDolar = wp_cache_get('clp_usd_ctala');
+        $valorDolar = wp_cache_get('clp_usd_ctala', $ctala_group);
         if (false === $valorDolar) {
             if (function_exists('curl_version')) {
                 $file = 'latest.json';
@@ -98,9 +112,9 @@ function convert_clp_to_usd($paypal_args) {
                 $exchangeRates = json_decode($json);
                 $valorDolar = $exchangeRates->rates->CLP;
             } else {
-               $valorDolar = 580; // Este es el valor por defecto. 
+                $valorDolar = 630; // Este es el valor por defecto. 
             }
-            wp_cache_set('clp_usd_ctala', $valorDolar);
+            wp_cache_set('clp_usd_ctala', $valorDolar, $ctala_group, $ctala_expire);
         }
 
         $convert_rate = $valorDolar; //set the converting rate
@@ -122,7 +136,7 @@ function postalcode_override_default_address_fields($address_fields) {
     return $address_fields;
 }
 
-//Se eliminan los códigos portales como obligatorios. (Filtro)
+//Se eliminan los códigos postales como obligatorios. (Filtro)
 add_filter('woocommerce_default_address_fields', 'postalcode_override_default_address_fields');
 
 add_filter('woocommerce_paypal_args', 'convert_clp_to_usd');

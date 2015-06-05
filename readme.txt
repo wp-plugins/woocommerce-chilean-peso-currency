@@ -10,7 +10,7 @@ Requires at least: 3, 3.3+ and WooCommerce 1.4+, Chilean Peso, Pesos Chilenos, c
 
 Tested up to: 3.6
 
-Stable tag: 2.5
+Stable tag: 2.5.5
 
 == Description ==
 
@@ -28,6 +28,13 @@ Deshabilita el código postal por ahora, debido a que en Chile aún no acostumbr
 Agregar panel de administración para las variables.
 
 == Changelog ==
+
+= 2.5.5 =
+
+Actualizado el 5 de Junio del 2015
+
+ * Se baja el tiempo del caché.
+ * Se actualiza el valor del dolar por defecto a 630.
 
 = 2.5 =
 
